@@ -1,0 +1,14 @@
+{
+  "name": "knex-waitfordb",
+  "version": "1.0.0",
+  "description": "Waiting knex database connection",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/plesk/knex-waitfordb.git"
+  },
+  "bin": {
+    "knex-waitfordb": "index.js"
+  },
+  "dependencies": {}
+}
