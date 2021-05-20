@@ -2,9 +2,10 @@
 'use strict'
 
 const path = require('path');
+const yargs = require('yargs/yargs')
 
 const KNEXFILE_DEFAULT = 'knexfile';
-const RETRY_DEFAULT = 10;
+const RETRY_DEFAULT = 100;
 const DELAY_DEFAULT = 1;
 const TESTSQL = 'select 1+1';
 
@@ -43,14 +44,25 @@ const checkKnexInstalled = () => {
 	return true;
 }
 
-const waitfordb = async () => {
-	const config = require(path.join(process.cwd(), KNEXFILE_DEFAULT))
+const validateConfig = (args) => {
+	return {
+		retry: Number(args.retry) || RETRY_DEFAULT,
+		delay: Number(args.delay) || DELAY_DEFAULT,
+		knexfile: args.config || KNEXFILE_DEFAULT,
+	}
+}
+
+const waitfordb = async (args) => {
+	const config = validateConfig(args)
+	const knexConfig = require(path.join(process.cwd(), config.knexfile))
+	
 	if (!checkKnexInstalled()) {
 		console.error("ERROR: Knex is not installed. Please run 'npm install knex'");
 		return process.exit(1);
 	}
 	
-	const rc = await retry(() => checkConnection(config), RETRY_DEFAULT, DELAY_DEFAULT);
+	const rc = await retry(() => checkConnection(knexConfig), config.retry, config.delay);
+	
 	if (rc) {
 		console.info('Database connection successful');
 		return process.exit(0);
@@ -60,6 +72,5 @@ const waitfordb = async () => {
 	}
 }
 
-
-waitfordb()
+waitfordb(yargs(process.argv.slice(2)).argv)
 

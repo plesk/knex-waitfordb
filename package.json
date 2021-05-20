@@ -10,5 +10,7 @@
   "bin": {
     "knex-waitfordb": "index.js"
   },
-  "dependencies": {}
+  "dependencies": {
+    "yargs": "^17.0.1"
+  }
 }
